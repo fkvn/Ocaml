@@ -1,0 +1,5 @@
+1. Impossible
+
+2. let x = 42 in let y = (let x = 21 in x + x) in x;;
+
+3. let x = fun x -> x * 2 in let x = x 21 in x;;

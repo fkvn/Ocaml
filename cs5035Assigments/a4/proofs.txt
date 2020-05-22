@@ -1,0 +1,207 @@
+CS5035 Assignment 4 [100 POINTS]
+------------------------------------------------------------
+
+
+
+Part 1 [15 POINTS]:
+----------------------
+
+Prove that for all a, b, c : complex,
+
+cadd a (cadd b c) == cadd (cadd a b) c
+
+Proof:
+
+cadd a (cadd b c)
+
+== cadd a (b1 + c1, b2 + c2) 				(eval cadd)
+== (a1 + b1 + c1, a2 + b2 + c2)				(eval cadd)
+== ((a1 + b1) + c1, (a2 + b2) + c2)			(math)
+== cadd (a1 + b1, a2 + b2) c				(eval reversed cadd)
+== cadd (cadd a b) c					(eval reversed cadd)
+
+QED!
+
+
+Part 2 [15 POINTS]: 
+----------------------
+
+Prove that for all integer lists xs and ys,
+max (maxs xs) (maxs ys) == (maxs (append xs ys)).
+
+Clearly justify each step of your proof.
+
+Proof:  By induction on the structure of the list xs.
+
+case xs == []:
+
+To show: max (maxs []) (maxs ys) == maxs (append [] ys)
+
+Proof:
+
+max (maxs []) (maxs ys)
+
+== max min_int (maxs ys) 				(eval maxs)
+== maxs ys						(eval max with properties: max min_int a == a)
+== maxs (append [] ys)					(eval reversed append)
+
+
+case xs == hd::tail:
+
+IH: max (maxs tail) (maxs ys) == maxs (append tail ys)
+
+To show: max (maxs (hd::tail)) (maxs ys) == maxs (append (hd::tail) ys)
+
+Proof:
+
+max (maxs (hd::tail)) (maxs ys)
+
+== max (max hd (maxs tail)) (maxs ys) 			(eval maxs)
+== max hd (max (maxs tail) (maxs ys))			(eval max with properties: max (max a b) c == max a (max b c))
+== max hd (maxs (append tail ys))			(IH)
+== maxs (hd::append tail ys)				(eval reversed maxs)
+== maxs (append (hd::tail) ys)				(eval reversed append)
+
+
+QED!
+
+
+Part 3 [40 POINTS]: 
+----------------------
+
+(a) [15 POINTS] Prove that for all integer lists l, bump1 l == bump2 l.
+
+case l = []
+
+To show: bump1 [] == bump2 []
+
+Proof:
+
+bump1 [] 
+
+== map (fun x -> x + 1) []				(eval bump1)
+== []							(eval map)
+== bump2 []						(eval reversed bump2)
+
+
+case l = hd::tail
+
+IH: bump1 tail == bump2 tail
+
+To show: bump1 (hd::tail) == bump2 (hd::tail)
+
+Proof:
+
+bump1 (hd::tail)
+
+== map (fun x -> x + 1) (hd::tail) 			(eval bump1)
+== (fun x -> x + 1) hd :: map (fun x -> x + 1) tail	(eval map)
+== (hd + 1) :: map (fun x -> x + 1) tail 		(eval fun)
+== bump2 (hd::tail)					(eval reversed bump2)
+
+
+QED!
+
+
+(b) [15 POINTS] Prove that for all integer lists l, bump1 l == bump3 l.
+
+case l = []
+
+To show: bump1 [] == bump3 []
+
+Proof:
+
+bump1 []
+
+== map (fun x -> x + 1) [] 				(eval bump1)
+== []							(eval map)
+== bump2 []						(eval reversed bump2)
+
+
+case l = hd::tail
+
+IH: bump1 tail == bump3 tail
+
+To show: bump1 (hd::tail) == bump3 (hd::tail)
+
+Proof: 
+
+bump1 (hd::tail)
+
+== map (fun x -> x + 1) (hd::tail)				(eval bump1)
+== (fun x -> x + 1) hd :: map (fun x -> x + 1) tail		(eval map)
+== (hd + 1) :: map (fun x -> x + 1) tail			(eval fun)
+== (hd + 1) :: bump1 tail 					(eval reversed bump1)
+== (hd + 1) :: bump3 tail					(IH)
+== bump3 (hd::tail)						(eval reversed bump3)
+
+
+QED!
+
+
+(c) [10 POINTS] In one sentence, what's the big difference between parts (a) and (b)?
+
+In part a, even though we use Induction Hypothesis method, we didn't apply IH when we proof. But, part b does.
+
+
+
+Part 2.4 [30 POINTS]:
+----------------------
+
+Either prove or disprove each of the following. You will do any proofs using
+induction on lists and you will disprove any false statement by providing a
+counter-example to the claim.  When you do a proof, be sure to use the 
+standard template for list proofs.
+
+(a) [15 POINTS] For all l : ('a * 'b) list, zip(unzip l) == l.
+
+case l = []
+
+To show: zip(unzip []) == []
+
+Proof:
+
+zip(unzip [])
+
+== zip([]. []) 							(eval unzip)
+== []								(eval zip)
+
+
+case l = (x, y)::tail
+
+IH: zip(unzip tail) == tail
+
+To show: zip(unzip ((x, y)::tail)) == (x, y)::tail
+
+Proof:
+
+zip(unzip ((x, y)::tail)) 
+
+== zip(let (xs, ys) = unzip tail in (x::xs, y::ys))		(eval unzip)
+== let (xs, ys) = unzip tail in zip(x::xs, y::ys)
+== let (xs, ys) = unzip tail in (x, y)::zip (xs, ys)		(eval zip)
+== (x, y)::zip(unzip tail)					(eval let)
+== (x, y)::tail							(IH)
+
+QED!
+
+(b) [15 POINTS] For all l1 : 'a list, l2 : 'b list, unzip(zip (l1,l2)) == (l1,l2).
+
+Suppose l1 is empty list (l1 = []) and l2 is non_empty list
+
+we have:
+
+unzip (zip (l1, l2))
+
+== unzip (zip ([], l2)) 
+== unzip []							(eval zip)
+== ([], [])							(eval unzip)
+
+We can see that as the result above l2 = [] which contradict with our assumption (l2 is non_empty)
+
+-> unzip(zip (l1, l2)) != (l1, l2) -> we disprove by the counter-example above.
+
+
+
+
+

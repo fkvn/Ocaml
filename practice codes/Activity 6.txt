@@ -1,0 +1,2 @@
+Theorem 1: For all t:'a tree, flip(flip t) == t
+Theorem 2: For all t:'a tree, flip(flip (flip t)) == flip t
